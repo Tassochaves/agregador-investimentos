@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.agregador_investimento.dto.CreateUserDTO;
+import com.dev.agregador_investimento.dto.UpdateUserDTO;
 import com.dev.agregador_investimento.entity.User;
 import com.dev.agregador_investimento.service.UserService;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -43,11 +45,18 @@ public class UserController {
         }
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<User>> listUsers() {
         var users = userService.listUsers();
 
         return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> updateUserById(@PathVariable String userId, @RequestBody UpdateUserDTO updateUserDTO) {
+
+        userService.updateUserById(userId, updateUserDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}")

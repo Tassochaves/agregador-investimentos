@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.dev.agregador_investimento.dto.CreateUserDTO;
+import com.dev.agregador_investimento.dto.UpdateUserDTO;
 import com.dev.agregador_investimento.entity.User;
 import com.dev.agregador_investimento.repository.UserRepository;
 
@@ -41,6 +42,27 @@ public class UserService {
 
     public List<User> listUsers() {
         return userRepository.findAll();
+    }
+
+    public void updateUserById(String userId, UpdateUserDTO updateUserDTO) {
+        var id = UUID.fromString(userId);
+
+        var userEntity = userRepository.findById(id);
+
+        if (userEntity.isPresent()) {
+            var user = userEntity.get();
+
+            if (updateUserDTO.username() != null) {
+                user.setUsername(updateUserDTO.username());
+            }
+
+            if (updateUserDTO.password() != null) {
+                user.setPassword(updateUserDTO.password());
+            }
+
+            userRepository.save(user);
+        }
+
     }
 
     public void deleteById(String userId) {
