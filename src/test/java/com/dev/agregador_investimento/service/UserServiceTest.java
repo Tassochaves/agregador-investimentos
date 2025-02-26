@@ -170,7 +170,7 @@ public class UserServiceTest {
         }
 
         @Test
-        @DisplayName("Should not dele user when user not exists")
+        @DisplayName("Should not delete user when user not exists")
         void shouldNotDeleteUserWhenNotExists() {
 
             // Arrange
