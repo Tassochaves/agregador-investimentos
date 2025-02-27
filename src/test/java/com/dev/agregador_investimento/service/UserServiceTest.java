@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.dev.agregador_investimento.dto.CreateUserDTO;
+import com.dev.agregador_investimento.dto.UpdateUserDTO;
 import com.dev.agregador_investimento.entity.User;
 import com.dev.agregador_investimento.repository.UserRepository;
 
@@ -186,6 +187,34 @@ public class UserServiceTest {
 
             verify(userRepository, times(1)).existsById(uuidArgumentCaptor.getValue());
             verify(userRepository, times(0)).deleteById(any());
+
+        }
+    }
+
+    @Nested
+    class updateUserById {
+
+        @Test
+        @DisplayName("Should update user by id when user exists and username and password is filled")
+        void shouldUpdateUserByIdWhenUserExistsAndUsernameAndPasswordIsFilled() {
+
+            // Arrange
+            var updateUserDTO = new UpdateUserDTO("newUsername", "newPassword");
+            var user = new User(UUID.randomUUID(), "username", "email@email.com", "password123", Instant.now(), null);
+            doReturn(Optional.of(user)).when(userRepository).findById(uuidArgumentCaptor.capture());
+            doReturn(user).when(userRepository).save(userArgumentCaptor.capture());
+
+            // Act
+            userService.updateUserById(user.getUserId().toString(), updateUserDTO);
+
+            var userCaptured = userArgumentCaptor.getValue();
+
+            // Assert
+            assertEquals(updateUserDTO.username(), userCaptured.getUsername());
+            assertEquals(updateUserDTO.password(), userCaptured.getPassword());
+
+            verify(userRepository, times(1)).findById(uuidArgumentCaptor.getValue());
+            verify(userRepository, times(1)).save(user);
 
         }
     }
