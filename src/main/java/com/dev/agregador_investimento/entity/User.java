@@ -1,6 +1,7 @@
 package com.dev.agregador_investimento.entity;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,6 +31,9 @@ public class User {
 
     @UpdateTimestamp
     private Instant updateTimestamp;
+
+    @OneToMany(mappedBy = "user")
+    private List<Account> accounts;
 
     public User() {
     }
@@ -89,6 +94,14 @@ public class User {
 
     public void setUpdateTimestamp(Instant updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
 }
