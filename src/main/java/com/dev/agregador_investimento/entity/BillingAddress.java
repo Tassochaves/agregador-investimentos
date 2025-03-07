@@ -2,10 +2,12 @@ package com.dev.agregador_investimento.entity;
 
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -13,11 +15,16 @@ import jakarta.persistence.Table;
 public class BillingAddress {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "account_id")
     private UUID id;
 
     private String street;
     private Integer number;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     public BillingAddress() {
     }
