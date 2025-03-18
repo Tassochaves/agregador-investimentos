@@ -1,5 +1,6 @@
 package com.dev.agregador_investimento.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -9,8 +10,10 @@ import jakarta.persistence.Table;
 public class Stock {
 
     @Id
+    @Column(name = "stock_id")
     private String stockId;
 
+    @Column(name = "description")
     private String description;
 
     public Stock() {

@@ -7,12 +7,9 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_users")
@@ -22,8 +19,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID userId;
 
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "password")
     private String password;
 
     @CreationTimestamp
@@ -32,6 +34,7 @@ public class User {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Account> accounts;
 

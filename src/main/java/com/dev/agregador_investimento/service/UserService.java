@@ -1,24 +1,39 @@
 package com.dev.agregador_investimento.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.dev.agregador_investimento.dto.AccountResponseDTO;
+import com.dev.agregador_investimento.dto.CreateAccountDTO;
 import com.dev.agregador_investimento.dto.CreateUserDTO;
 import com.dev.agregador_investimento.dto.UpdateUserDTO;
+import com.dev.agregador_investimento.entity.Account;
+import com.dev.agregador_investimento.entity.BillingAddress;
 import com.dev.agregador_investimento.entity.User;
+import com.dev.agregador_investimento.repository.AccountRepository;
+import com.dev.agregador_investimento.repository.BillingAddressRepository;
 import com.dev.agregador_investimento.repository.UserRepository;
 
 @Service
 public class UserService {
 
     private UserRepository userRepository;
+    private AccountRepository accountRepository;
+    private BillingAddressRepository billingAddressRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AccountRepository accountRepository,
+            BillingAddressRepository billingAddressRepository) {
+
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
+        this.billingAddressRepository = billingAddressRepository;
     }
 
     public UUID createUser(CreateUserDTO createUserDTO) {
@@ -73,5 +88,45 @@ public class UserService {
         if (userExists) {
             userRepository.deleteById(id);
         }
+    }
+
+    public void createAccount(String userId, CreateAccountDTO createAccountDTO) {
+
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        // DTO to Entity
+        Account account = new Account(
+                null,
+                user,
+                null,
+                createAccountDTO.description(),
+                new ArrayList<>());
+        System.out.println("ANTES ACCOUNT ID: " + account.getAccountId());
+        var accountCreated = accountRepository.save(account);
+        System.out.println("MINHA ACCOUNT ID: " + account.getAccountId());
+        // account.setAccountId(accountCreated.getAccountId());
+
+        BillingAddress billingAddress = new BillingAddress(
+                accountCreated.getAccountId(),
+                account,
+                createAccountDTO.street(),
+                createAccountDTO.number());
+
+        System.out.println("MINHA BILLINGADDRESS id: " + billingAddress.getId());
+        billingAddressRepository.save(billingAddress);
+    }
+
+    public List<AccountResponseDTO> listAccounts(String userId) {
+
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        var accounts = user.getAccounts().stream()
+                .map(ac -> new AccountResponseDTO(ac.getAccountId().toString(), ac.getDescription()))
+                .toList();
+
+        return accounts;
+
     }
 }

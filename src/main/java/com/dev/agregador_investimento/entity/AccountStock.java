@@ -1,14 +1,9 @@
 package com.dev.agregador_investimento.entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tb_accounts_stocks")
+@Table(name = "tb_accounts_tocks")
 public class AccountStock {
 
     @EmbeddedId
@@ -24,6 +19,7 @@ public class AccountStock {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @Column(name = "quantity")
     private Integer quantity;
 
     public AccountStock() {
@@ -67,5 +63,4 @@ public class AccountStock {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-
 }

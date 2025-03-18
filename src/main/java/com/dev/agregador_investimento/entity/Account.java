@@ -1,16 +1,9 @@
 package com.dev.agregador_investimento.entity;
 
+import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_accounts")
@@ -18,24 +11,33 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "account_id")
     private UUID accountId;
-
-    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
     @PrimaryKeyJoinColumn
     private BillingAddress billingAddress;
+
+    @Column(name = "description")
+    private String description;
+
+    @OneToMany(mappedBy = "account")
+    private List<AccountStock> accountStocks;
 
     public Account() {
     }
 
-    public Account(UUID accountId, String description) {
+    public Account(UUID accountId, User user, BillingAddress billingAddress, String description,
+            List<AccountStock> accountStocks) {
         this.accountId = accountId;
+        this.user = user;
+        this.billingAddress = billingAddress;
         this.description = description;
+        this.accountStocks = accountStocks;
     }
 
     public UUID getAccountId() {
@@ -61,4 +63,21 @@ public class Account {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public BillingAddress getBillingAddress() {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(BillingAddress billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public List<AccountStock> getAccountStocks() {
+        return accountStocks;
+    }
+
+    public void setAccountStocks(List<AccountStock> accountStocks) {
+        this.accountStocks = accountStocks;
+    }
+
 }
