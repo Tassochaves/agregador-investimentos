@@ -18,7 +18,7 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+    @OneToOne(mappedBy = "account")
     @PrimaryKeyJoinColumn
     private BillingAddress billingAddress;
 

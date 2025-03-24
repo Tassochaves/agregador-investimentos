@@ -1,5 +1,7 @@
 package com.dev.agregador_investimento.service;
 
+import static java.util.Objects.isNull;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,27 +95,28 @@ public class UserService {
     public void createAccount(String userId, CreateAccountDTO createAccountDTO) {
 
         User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario não existe"));
+
+        if (isNull(user.getAccounts())) {
+            user.setAccounts(new ArrayList<>());
+        }
 
         // DTO to Entity
-        Account account = new Account(
+        var account = new Account(
                 null,
                 user,
                 null,
                 createAccountDTO.description(),
                 new ArrayList<>());
-        System.out.println("ANTES ACCOUNT ID: " + account.getAccountId());
-        var accountCreated = accountRepository.save(account);
-        System.out.println("MINHA ACCOUNT ID: " + account.getAccountId());
-        // account.setAccountId(accountCreated.getAccountId());
 
-        BillingAddress billingAddress = new BillingAddress(
+        var accountCreated = accountRepository.save(account);
+        // System.out.println("AccountID" + account.getAccountId());
+        var billingAddress = new BillingAddress(
                 accountCreated.getAccountId(),
                 account,
                 createAccountDTO.street(),
                 createAccountDTO.number());
 
-        System.out.println("MINHA BILLINGADDRESS id: " + billingAddress.getId());
         billingAddressRepository.save(billingAddress);
     }
 
