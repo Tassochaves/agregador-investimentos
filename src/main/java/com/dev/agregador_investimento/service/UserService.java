@@ -23,6 +23,8 @@ import com.dev.agregador_investimento.repository.AccountRepository;
 import com.dev.agregador_investimento.repository.BillingAddressRepository;
 import com.dev.agregador_investimento.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -38,6 +40,7 @@ public class UserService {
         this.billingAddressRepository = billingAddressRepository;
     }
 
+    @Transactional
     public UUID createUser(CreateUserDTO createUserDTO) {
         // DTO to Entity
         var entity = new User(
@@ -82,6 +85,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public void deleteById(String userId) {
         var id = UUID.fromString(userId);
 
@@ -92,27 +96,22 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void createAccount(String userId, CreateAccountDTO createAccountDTO) {
 
         User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario não existe"));
 
+        System.out.println("Usuario do banco: " + user.getUserId());
         if (isNull(user.getAccounts())) {
             user.setAccounts(new ArrayList<>());
         }
 
         // DTO to Entity
-        var account = new Account(
-                null,
-                user,
-                null,
-                createAccountDTO.description(),
-                new ArrayList<>());
+        Account account = new Account(null, user, null, createAccountDTO.description(), new ArrayList<>());
 
-        var accountCreated = accountRepository.save(account);
-        // System.out.println("AccountID" + account.getAccountId());
         var billingAddress = new BillingAddress(
-                accountCreated.getAccountId(),
+                account.getAccountId(),
                 account,
                 createAccountDTO.street(),
                 createAccountDTO.number());
